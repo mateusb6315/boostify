@@ -11,10 +11,10 @@ class Eventos(commands.Cog):
         self.bot = bot
         super().__init__()
 
-    def _get_boosts_cog(self):
-        cog = self.bot.get_cog("Boosts")
+    def _get_gestordados_cog(self):
+        cog = self.bot.get_cog("GestorDados")
         if cog is None:
-            print("Erro: Cog Boosts não carregada")
+            print("Erro: Cog GestorDados não carregada")
         return cog
 
     @commands.Cog.listener()
@@ -31,9 +31,9 @@ class Eventos(commands.Cog):
             if canal:
                 await canal.send(f"{after.mention} não é mais Booster")
 
-            boosts_cog = self._get_boosts_cog()
-            if boosts_cog:
-                await boosts_cog.atualizarBoostDB(after, 0)
+            gestor = self._get_gestordados_cog()
+            if gestor:
+                await gestor.atualizarBoost(after, 0)
 
     @commands.Cog.listener()
     async def on_message(self, mensagem):
@@ -56,12 +56,11 @@ class Eventos(commands.Cog):
 
         usuariobooster = mensagem.author
 
-        boosts_cog = self._get_boosts_cog()
-        if boosts_cog is None:
+        gestor = self._get_gestordados_cog()
+        if gestor is None:
             return
 
-        qtd_boosts = await boosts_cog.adicionarBoostDB(usuariobooster)
-
+        qtd_boosts = await gestor.adicionarBoost(usuariobooster)
         if qtd_boosts >= 2:
             doublebooster = mensagem.guild.get_role(DOUBLEBOOSTER_ID)
             if doublebooster:

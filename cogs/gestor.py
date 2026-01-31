@@ -6,7 +6,7 @@ from discord.ext import commands
 DIRETORIO_BOOSTS = "data/boosts.json"
 
 
-class Boosts(commands.Cog):
+class GestorDados(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         super().__init__()
@@ -26,14 +26,14 @@ class Boosts(commands.Cog):
         with open(DIRETORIO_BOOSTS, "w") as arquivo:
             json.dump(data, arquivo, indent=4)
 
-    async def atualizarBoostDB(self, usuario, boosts):
+    async def atualizarBoost(self, usuario, boosts):
         dados = self.ler_json()
         usuario_id_str = str(usuario.id)
         dados[usuario_id_str] = {"boosts": boosts}
         self.gravar_json(dados)
         return dados[usuario_id_str]
 
-    async def adicionarBoostDB(self, usuario):
+    async def adicionarBoost(self, usuario):
         usuario_id_str = str(usuario.id)
         dados = self.ler_json()
         if usuario_id_str not in dados:
@@ -43,11 +43,11 @@ class Boosts(commands.Cog):
         self.gravar_json(dados)
         return dados[usuario_id_str]["boosts"]
 
-    async def obterBoostsDB(self, usuario):
+    async def obterBoosts(self, usuario):
         usuario_id_str = str(usuario.id)
         dados = self.ler_json()
         return dados.get(usuario_id_str, {"boosts": 0})["boosts"]
 
 
 async def setup(bot):
-    await bot.add_cog(Boosts(bot))
+    await bot.add_cog(GestorDados(bot))
