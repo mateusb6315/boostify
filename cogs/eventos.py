@@ -1,9 +1,6 @@
 from discord.ext import commands
 import discord
-
-
-DOUBLEBOOSTER_ID = 1294435658210869259
-CANAL_ID = 1294435658797944842
+from config.vars import DOUBLEBOOSTER_ID, CANAL_ID
 
 
 class Eventos(commands.Cog):

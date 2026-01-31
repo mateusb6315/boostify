@@ -1,9 +1,7 @@
 import os
 import json
 from discord.ext import commands
-
-
-DIRETORIO_BOOSTS = "data/boosts.json"
+from config.vars import DIRETORIO_BOOSTS
 
 
 class GestorDados(commands.Cog):
