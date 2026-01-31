@@ -21,6 +21,8 @@ async def carregar_cogs():
 
 @bot.event
 async def on_ready():
+    await bot.tree.sync()
+    print("Comandos sincronizados")
     print(f"Bot online como {bot.user}")
 
 
@@ -31,8 +33,6 @@ async def main():
     async with bot:
         await carregar_cogs()
         print("Cogs carregados")
-        await bot.tree.sync()
-        print("Comandos sincronizados")
         await bot.start(TOKEN)
 
 
