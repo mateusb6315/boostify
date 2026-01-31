@@ -24,7 +24,7 @@ class GestorDados(commands.Cog):
         with open(DIRETORIO_BOOSTS, "w") as arquivo:
             json.dump(data, arquivo, indent=4)
 
-    def limpar_json(self):
+    async def limpar_json(self):
         with open(DIRETORIO_BOOSTS, "w") as arquivo:
             json.dump({}, arquivo)
 

@@ -26,7 +26,7 @@ class Eventos(commands.Cog):
 
             canal = after.guild.get_channel(CANAL_ID)
             if canal:
-                await canal.send(f"{after.mention} não é mais Booster")
+                await canal.send(f"❌ {after.mention} não é mais Booster")
 
             gestor = self._get_gestordados_cog()
             if gestor:
@@ -35,9 +35,6 @@ class Eventos(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, mensagem):
         if mensagem.guild is None:
-            return
-
-        if mensagem.guild.get_channel(CANAL_ID) is None:
             return
 
         if mensagem.channel.id != CANAL_ID:
@@ -63,12 +60,12 @@ class Eventos(commands.Cog):
             if doublebooster:
                 await mensagem.author.add_roles(doublebooster)
                 await mensagem.channel.send(
-                    f"{mensagem.author.mention} virou 2x booster"
+                    f"{mensagem.author.mention} virou Super Booster 🚀"
                 )
             else:
                 print("Erro: Cargo doublebooster não encontrado")
         else:
-            await mensagem.channel.send(f"{mensagem.author.mention} virou 1x booster")
+            await mensagem.channel.send(f"🎉 {mensagem.author.mention} virou Booster!")
 
 
 async def setup(bot):

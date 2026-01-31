@@ -1,5 +1,6 @@
 from discord.ext import commands
 import discord
+import asyncio
 from config.vars import DOUBLEBOOSTER_ID
 
 
@@ -24,14 +25,14 @@ class Admin(commands.Cog):
 
         qtd_boosts = await gestor.adicionarBoost(usuario)
         await ctx.send(
-            f"Boost adicionado! {usuario.mention} agora tem {qtd_boosts} boost(s)"
+            f"✅ Boost adicionado! {usuario.mention} agora tem {qtd_boosts} boost(s)"
         )
 
         if qtd_boosts >= 2:
             cargo = ctx.guild.get_role(DOUBLEBOOSTER_ID)
             if cargo:
                 await usuario.add_roles(cargo)
-                await ctx.send(f"{usuario.mention} recebeu o cargo Super Booster!")
+                await ctx.send(f"🚀 {usuario.mention} recebeu o cargo Super Booster!")
 
     @commands.command(name="removerboost")
     @commands.is_owner()
@@ -42,11 +43,19 @@ class Admin(commands.Cog):
         if not gestor:
             return await ctx.send("Erro: Cog GestorDados não encontrada")
         if await gestor.obterBoosts(usuario) == 0:
-            return await ctx.send(f"{usuario.mention} não tem boosts nesse servidor.")
+            return await ctx.send(
+                f"❌ {usuario.mention} não tem boosts nesse servidor."
+            )
         qtd_boosts = await gestor.removerBoost(usuario)
         await ctx.send(
-            f"Boost removido! {usuario.mention} agora tem {qtd_boosts} boost(s)"
+            f"✅ Boost removido! {usuario.mention} agora tem {qtd_boosts} boost(s)"
         )
+
+        if qtd_boosts < 2:
+            cargo = ctx.guild.get_role(DOUBLEBOOSTER_ID)
+            if cargo and cargo in usuario.roles:
+                await usuario.remove_roles(cargo)
+                await ctx.send(f"❌ {usuario.mention} perdeu o cargo Super Booster!")
 
     @commands.command(name="resetboost")
     @commands.is_owner()
@@ -64,7 +73,7 @@ class Admin(commands.Cog):
         if cargo and cargo in usuario.roles:
             await usuario.remove_roles(cargo)
 
-        await ctx.send(f"Boosts de {usuario.mention} resetados!")
+        await ctx.send(f"↩️ Boosts de {usuario.mention} resetados!")
 
     @commands.command(name="verboost")
     @commands.is_owner()
@@ -76,7 +85,7 @@ class Admin(commands.Cog):
             return await ctx.send("Erro: Cog GestorDados não encontrada")
 
         qtd_boosts = await gestor.obterBoosts(usuario)
-        await ctx.send(f"{usuario.mention} tem {qtd_boosts} boost(s)")
+        await ctx.send(f"✏️ {usuario.mention} tem {qtd_boosts} boost(s)")
 
     @commands.command(name="check")
     @commands.is_owner()
@@ -86,9 +95,9 @@ class Admin(commands.Cog):
         if not gestor:
             return await ctx.send("Erro: Cog GestorDados não encontrada")
         dados = gestor.ler_json()
-        mensagem = "Boosts registrados:\n"
+        mensagem = "📊 Boosts registrados:\n\n"
         if not dados:
-            mensagem += "Nenhum boost registrado."
+            mensagem += "❌ Nenhum boost registrado."
         for usuario_id, info in dados.items():
             mensagem += f"<@{usuario_id}>: {info['boosts']} boost(s)\n"
         await ctx.send(mensagem)
@@ -97,11 +106,29 @@ class Admin(commands.Cog):
     @commands.is_owner()
     async def limpar_json(self, ctx):
         """Limpa o arquivo JSON de boosts"""
+        await ctx.send(
+            "⚠️ Atenção: Isso irá apagar todos os dados de boosts.\n"
+            'Tem certeza? Responda "sim" em até 10 segundos.'
+        )
+
+        def check(mensagem):
+            return (
+                mensagem.author == ctx.author
+                and mensagem.channel == ctx.channel
+                and mensagem.content.lower() == "sim"
+            )
+
+        try:
+            await self.bot.wait_for("message", check=check, timeout=10)
+        except asyncio.TimeoutError:
+            return await ctx.send("⏱️ Tempo esgotado. Comando cancelado.")
+
         gestor = self.obter_gestordados_cog()
         if not gestor:
             return await ctx.send("Erro: Cog GestorDados não encontrada")
         await gestor.limpar_json()
-        await ctx.send("Arquivo JSON de boosts limpo!")
+        await ctx.send("✅ Arquivo JSON de boosts limpo!")
+
 
 async def setup(bot):
     await bot.add_cog(Admin(bot))
