@@ -14,22 +14,22 @@ async def carregar_cogs():
         if arquivo.endswith(".py"):
             try:
                 await bot.load_extension(f"cogs.{arquivo[:-3]}")
-                print(f"Cog {arquivo} carregada com sucesso.")
+                print(f"Log: Cog {arquivo} carregada com sucesso.")
             except Exception as erro:
-                print(f"Erro ao carregar {arquivo}: {erro}")
+                print(f"Log: Erro ao carregar {arquivo}: {erro}")
 
 
 @bot.event
 async def on_ready():
     await bot.tree.sync()
-    print("Comandos sincronizados")
-    print(f"Bot online como {bot.user}")
+    print("Log: Comandos sincronizados")
+    print(f"Log: Bot online como {bot.user}")
 
 
 async def main():
     async with bot:
         await carregar_cogs()
-        print("Cogs carregados")
+        print("Log: Cogs carregados")
         await bot.start(TOKEN)
 
 

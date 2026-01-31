@@ -15,6 +15,7 @@ class GestorDados(commands.Cog):
         if not os.path.exists(DIRETORIO_BOOSTS):
             with open(DIRETORIO_BOOSTS, "w") as arquivo:
                 json.dump({}, arquivo)
+                print("Log: Pasta data criada e arquivo boosts.json inicializado.")
 
     def ler_json(self):
         with open(DIRETORIO_BOOSTS, "r") as arquivo:
