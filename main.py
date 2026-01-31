@@ -2,7 +2,7 @@ from discord.ext import commands
 import discord
 import os
 import asyncio
-from dotenv import load_dotenv
+from config.vars import TOKEN
 
 bot = commands.Bot(
     command_prefix=commands.when_mentioned_or("bb."), intents=discord.Intents.all()
@@ -27,9 +27,6 @@ async def on_ready():
 
 
 async def main():
-    load_dotenv()
-    TOKEN = os.getenv("TOKEN")
-
     async with bot:
         await carregar_cogs()
         print("Cogs carregados")
