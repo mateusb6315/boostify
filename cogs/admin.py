@@ -102,6 +102,28 @@ class Admin(commands.Cog):
             mensagem += f"<@{usuario_id}>: {info['boosts']} boost(s)\n"
         await ctx.send(mensagem)
 
+    @commands.command(name="stats")
+    @commands.is_owner()
+    async def estatisticas(self, ctx):
+        gestor = self.obter_gestordados_cog()
+        dados = gestor.ler_json()
+
+        total_boosters = len(dados)
+        total_boosts = sum(info["boosts"] for info in dados.values())
+        super_boosters = sum(1 for info in dados.values() if info["boosts"] >= 2)
+
+        embed = discord.Embed(
+            title="📊 Estatísticas de Boosts", color=discord.Color.magenta()
+        )
+        embed.add_field(
+            name="Total de Boosters", value=str(total_boosters), inline=False
+        )
+        embed.add_field(name="Total de Boosts", value=str(total_boosts), inline=False)
+        embed.add_field(
+            name="Super Boosters (2+ boosts)", value=str(super_boosters), inline=False
+        )
+        await ctx.send(embed=embed)
+
     @commands.command(name="limparjson")
     @commands.is_owner()
     async def limpar_json(self, ctx):
