@@ -5,7 +5,7 @@ import asyncio
 from dotenv import load_dotenv
 
 bot = commands.Bot(
-    command_prefix=commands.when_mentioned_or("cob."), intents=discord.Intents.all()
+    command_prefix=commands.when_mentioned_or("bb."), intents=discord.Intents.all()
 )
 
 
