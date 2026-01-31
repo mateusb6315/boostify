@@ -93,6 +93,15 @@ class Admin(commands.Cog):
             mensagem += f"<@{usuario_id}>: {info['boosts']} boost(s)\n"
         await ctx.send(mensagem)
 
+    @commands.command(name="limparjson")
+    @commands.is_owner()
+    async def limpar_json(self, ctx):
+        """Limpa o arquivo JSON de boosts"""
+        gestor = self.obter_gestordados_cog()
+        if not gestor:
+            return await ctx.send("Erro: Cog GestorDados não encontrada")
+        await gestor.limpar_json()
+        await ctx.send("Arquivo JSON de boosts limpo!")
 
 async def setup(bot):
     await bot.add_cog(Admin(bot))

@@ -24,6 +24,10 @@ class GestorDados(commands.Cog):
         with open(DIRETORIO_BOOSTS, "w") as arquivo:
             json.dump(data, arquivo, indent=4)
 
+    def limpar_json(self):
+        with open(DIRETORIO_BOOSTS, "w") as arquivo:
+            json.dump({}, arquivo)
+
     async def atualizarBoost(self, usuario, boosts):
         dados = self.ler_json()
         usuario_id_str = str(usuario.id)
