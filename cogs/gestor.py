@@ -41,6 +41,14 @@ class GestorDados(commands.Cog):
         self.gravar_json(dados)
         return dados[usuario_id_str]["boosts"]
 
+    async def removerBoost(self, usuario):
+        usuario_id_str = str(usuario.id)
+        dados = self.ler_json()
+        if usuario_id_str in dados and dados[usuario_id_str]["boosts"] > 0:
+            dados[usuario_id_str]["boosts"] -= 1
+            self.gravar_json(dados)
+        return dados[usuario_id_str]["boosts"]
+
     async def obterBoosts(self, usuario):
         usuario_id_str = str(usuario.id)
         dados = self.ler_json()
