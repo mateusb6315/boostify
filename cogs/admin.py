@@ -112,7 +112,7 @@ class Admin(commands.Cog):
         gestor = self.obter_gestordados_cog()
         dados = gestor.ler_json()
 
-        total_boosters = len(dados)
+        total_boosters = sum(1 for info in dados.values() if info["boosts"] > 0)
         total_boosts = sum(info["boosts"] for info in dados.values())
         super_boosters = sum(1 for info in dados.values() if info["boosts"] >= 2)
 
