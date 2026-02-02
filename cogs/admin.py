@@ -99,7 +99,11 @@ class Admin(commands.Cog):
         if not dados:
             mensagem += "❌ Nenhum boost registrado."
         for usuario_id, info in dados.items():
-            mensagem += f"<@{usuario_id}>: {info['boosts']} boost(s)\n"
+            mensagem += (
+                f"<@{usuario_id}>: {info['boosts']} boost(s)\n"
+                if info["boosts"] > 0
+                else ""
+            )
         await ctx.send(mensagem)
 
     @commands.command(name="stats")
