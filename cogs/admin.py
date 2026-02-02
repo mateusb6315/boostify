@@ -1,7 +1,7 @@
 from discord.ext import commands
 import discord
 import asyncio
-from config.vars import DOUBLEBOOSTER_ID
+from config.vars import DOUBLEBOOSTER_ID, CANAL_ID
 
 
 class Admin(commands.Cog):
@@ -127,6 +127,33 @@ class Admin(commands.Cog):
             name="Super Boosters (2+ boosts)", value=str(super_boosters), inline=False
         )
         await ctx.send(embed=embed)
+
+    @commands.command(name="testecanal")
+    @commands.is_owner()
+    async def test_channel(self, ctx, canal: discord.TextChannel = None):
+        """Testa o canal de notificações de boosts"""
+        if canal.id == CANAL_ID:
+            await ctx.send(
+                "✅ O canal de notificações de boosts está configurado corretamente."
+            )
+        else:
+            await ctx.send(
+                "❌ O canal de notificações de boosts não está configurado corretamente."
+            )
+
+    @commands.command(name="testecargo")
+    @commands.is_owner()
+    async def test_role(self, ctx, cargo: discord.Role = None):
+        if cargo is None:
+            cargo = ctx.guild.get_role(DOUBLEBOOSTER_ID)
+            if cargo is None:
+                await ctx.send(
+                    "❌ O cargo Super Booster não existe ou não foi encontrado."
+                )
+            if cargo.id == DOUBLEBOOSTER_ID:
+                await ctx.send(
+                    "✅ O cargo Super Booster está configurado corretamente."
+                )
 
     @commands.command(name="limparjson")
     @commands.is_owner()
