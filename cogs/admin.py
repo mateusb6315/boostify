@@ -132,14 +132,16 @@ class Admin(commands.Cog):
     @commands.is_owner()
     async def test_channel(self, ctx, canal: discord.TextChannel = None):
         """Testa o canal de notificações de boosts"""
-        if canal.id == CANAL_ID:
-            await ctx.send(
-                "✅ O canal de notificações de boosts está configurado corretamente."
-            )
-        else:
-            await ctx.send(
-                "❌ O canal de notificações de boosts não está configurado corretamente."
-            )
+        if canal is None:
+            canal = ctx.guild.get_channel(CANAL_ID)
+            if canal is None:
+                await ctx.send(
+                    "❌ O canal de notificações não existe ou não foi encontrado."
+                )
+            if canal.id == CANAL_ID:
+                await ctx.send(
+                    "✅ O canal de notificações está configurado corretamente."
+                )
 
     @commands.command(name="testecargo")
     @commands.is_owner()
