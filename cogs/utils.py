@@ -19,7 +19,9 @@ class Utils(commands.Cog):
             )
             return
         else:
-            await ctx.send(f"Cargo: {nome_cargo}\nCor: {cor_cargo}")
+            await ctx.send(
+                f"Usuário: {ctx.author.mention}\nCargo: {nome_cargo}\nCor: {cor_cargo}"
+            )
             await ctx.message.delete()
 
 
