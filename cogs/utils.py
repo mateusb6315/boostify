@@ -15,7 +15,7 @@ class Utils(commands.Cog):
     ):
         if nome_cargo is None or cor_cargo is None:
             await ctx.send(
-                "Uso correto: `bb.cargo <nome_cargo> <cor_cargo>`\nExemplo: `a.cargo Fã de F1 #FF0000`"
+                "Uso correto: `bb.cargo <nome_cargo> <cor_cargo>`\nExemplo: `bb.cargo Fã de F1 #FF0000`"
             )
             return
 
