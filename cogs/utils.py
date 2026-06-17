@@ -18,8 +18,9 @@ class Utils(commands.Cog):
                 "Uso correto: `bb.cargo <nome_cargo> <cor_cargo>`\nExemplo: `bb.cargo Fã de F1 #FF0000`"
             )
             return
-
-        await ctx.send(f"Cargo: {nome_cargo}\nCor: {cor_cargo}")
+        else:
+            await ctx.send(f"Cargo: {nome_cargo}\nCor: {cor_cargo}")
+            await ctx.message.delete()
 
 
 async def setup(bot):
