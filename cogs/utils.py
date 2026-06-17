@@ -20,7 +20,7 @@ class Utils(commands.Cog):
             return
         else:
             await ctx.send(
-                f"Usuário: {ctx.author.mention}\nCargo: {nome_cargo}\nCor: {cor_cargo}"
+                f"**Pedido de cargo**\n\n**Usuário**: {ctx.author.mention}\n**Cargo**: {nome_cargo}\n**Cor**: {cor_cargo}"
             )
             await ctx.message.delete()
 
