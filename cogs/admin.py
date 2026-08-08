@@ -14,7 +14,7 @@ class Admin(commands.Cog):
             print("Erro: Cog GestorDados não carregada")
         return cog
 
-    @commands.command(name="addboost")
+    @commands.command(name="add")
     @commands.is_owner()
     async def adicionar_boost(self, ctx, usuario: discord.Member = None):
         """Adiciona um boost"""
@@ -34,7 +34,7 @@ class Admin(commands.Cog):
                 await usuario.add_roles(cargo)
                 await ctx.send(f"🚀 {usuario.mention} recebeu o cargo Super Booster!")
 
-    @commands.command(name="removerboost")
+    @commands.command(name="rm")
     @commands.is_owner()
     async def remover_boost(self, ctx, usuario: discord.Member = None):
         """Remove um boost de um usuário"""
@@ -57,7 +57,7 @@ class Admin(commands.Cog):
                 await usuario.remove_roles(cargo)
                 await ctx.send(f"❌ {usuario.mention} perdeu o cargo Super Booster!")
 
-    @commands.command(name="resetboost")
+    @commands.command(name="reset")
     @commands.is_owner()
     async def resetar_boost(self, ctx, usuario: discord.Member = None):
         """Reseta os boosts de um usuário"""
@@ -75,7 +75,7 @@ class Admin(commands.Cog):
 
         await ctx.send(f"↩️ Boosts de {usuario.mention} resetados!")
 
-    @commands.command(name="verboost")
+    @commands.command(name="view")
     @commands.is_owner()
     async def ver_boost(self, ctx, usuario: discord.Member = None):
         """Mostra quantos boosts um usuário tem"""
@@ -87,7 +87,7 @@ class Admin(commands.Cog):
         qtd_boosts = await gestor.obterBoosts(usuario)
         await ctx.send(f"✏️ {usuario.mention} tem {qtd_boosts} boost(s)")
 
-    @commands.command(name="check")
+    @commands.command(name="list")
     @commands.is_owner()
     async def checar_boosts(self, ctx):
         """Checa todos os boosts registrados"""
