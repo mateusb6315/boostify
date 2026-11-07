@@ -141,7 +141,7 @@ python -m pytest
 - **Instalações anteriores:** o formato antigo de `boosts.json` não é migrado automaticamente. Para começar uma instalação nova, configure um `DATA_DIR` vazio; o bot não sobrescreve automaticamente um arquivo antigo.
 - **Acesso administrativo:** cargos confiáveis podem executar comandos administrativos, inclusive alterar a configuração do cargo e a contagem de membros. Conceda essa confiança com cuidado e considere as permissões dos cargos que o bot pode gerenciar.
 - **Segredos:** mantenha `.env` e o token fora do repositório. Se um token for exposto, substitua-o no portal do Discord.
-- **Discloud:** `discloud.config` é um exemplo genérico e opcional. Para usá-lo, confira a configuração atual da plataforma, forneça `TOKEN` como variável de ambiente e confirme que `DATA_DIR` possui armazenamento persistente entre reinícios e implantações.
+- **Discloud:** `discloud.config` é um template padrão de configuração e opcional para uso no serviço de hospedagem Discloud. Para usá-lo, confira a configuração atual da plataforma, forneça `TOKEN` como variável de ambiente e confirme que `DATA_DIR` possui armazenamento persistente entre reinícios e implantações.
 
 ## Licença
 
