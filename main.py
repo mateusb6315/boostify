@@ -1,36 +1,29 @@
-from discord.ext import commands
-import discord
-import os
 import asyncio
-from config.vars import TOKEN
+import logging
 
-bot = commands.Bot(
-    command_prefix=commands.when_mentioned_or("bb."), intents=discord.Intents.all()
-)
+import discord
+from discord.ext import commands
 
+from config.vars import load_config
 
-async def carregar_cogs():
-    for arquivo in os.listdir("./cogs"):
-        if arquivo.endswith(".py"):
-            try:
-                await bot.load_extension(f"cogs.{arquivo[:-3]}")
-                print(f"Log: Cog {arquivo} carregada com sucesso.")
-            except Exception as erro:
-                print(f"Log: Erro ao carregar {arquivo}: {erro}")
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger(__name__)
 
 
-@bot.event
-async def on_ready():
-    await bot.tree.sync()
-    print("Log: Comandos sincronizados")
-    print(f"Log: Bot online como {bot.user}")
+class BoostBot(commands.Bot):
+    async def setup_hook(self):
+        for extension in ("cogs.gestor", "cogs.admin", "cogs.eventos"):
+            await self.load_extension(extension)
 
 
 async def main():
+    config = load_config()
+    intents = discord.Intents.default()
+    intents.members = True
+    intents.message_content = True
+    bot = BoostBot(command_prefix=commands.when_mentioned_or(config.prefix), intents=intents)
     async with bot:
-        await carregar_cogs()
-        print("Log: Cogs carregados")
-        await bot.start(TOKEN)
+        await bot.start(config.token)
 
 
 if __name__ == "__main__":

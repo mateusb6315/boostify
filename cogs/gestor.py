@@ -1,63 +1,68 @@
-import os
+import asyncio
 import json
+import os
+import tempfile
+from pathlib import Path
+
 from discord.ext import commands
-from config.vars import DIRETORIO_BOOSTS
+from config.vars import DATA_DIR
 
 
 class GestorDados(commands.Cog):
-    def __init__(self, bot):
+    """Persistência local; cada instância pertence a um único servidor."""
+
+    def __init__(self, bot, data_dir=None):
         self.bot = bot
-        super().__init__()
-        self._garantir_arquivo()
+        self.data_dir = Path(data_dir) if data_dir is not None else DATA_DIR
+        self.data_dir.mkdir(parents=True, exist_ok=True)
+        self.lock = asyncio.Lock()
+        for name, default in (("boosts", {"users": {}, "processed_messages": []}),
+                              ("admins", {"role_ids": []}), ("config", {})):
+            path = self.data_dir / f"{name}.json"
+            if not path.exists():
+                self.write(name, default)
+        boosts = self.read("boosts")
+        if not isinstance(boosts, dict) or not isinstance(boosts.get("users"), dict) or not isinstance(boosts.get("processed_messages"), list):
+            raise ValueError("Formato antigo ou inválido em boosts.json; use um DATA_DIR vazio. O arquivo existente não foi alterado.")
 
-    def _garantir_arquivo(self):
-        os.makedirs(os.path.dirname(DIRETORIO_BOOSTS), exist_ok=True)
-        if not os.path.exists(DIRETORIO_BOOSTS):
-            with open(DIRETORIO_BOOSTS, "w") as arquivo:
-                json.dump({}, arquivo)
-                print("Log: Pasta data criada e arquivo boosts.json inicializado.")
+    def read(self, name):
+        with (self.data_dir / f"{name}.json").open(encoding="utf-8") as file:
+            return json.load(file)
 
-    def ler_json(self):
-        with open(DIRETORIO_BOOSTS, "r") as arquivo:
-            return json.load(arquivo)
+    def write(self, name, value):
+        path = self.data_dir / f"{name}.json"
+        fd, temporary = tempfile.mkstemp(dir=self.data_dir, prefix=f".{name}-", suffix=".tmp")
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as file:
+                json.dump(value, file, indent=2, ensure_ascii=False)
+                file.flush()
+                os.fsync(file.fileno())
+            os.replace(temporary, path)
+        finally:
+            if os.path.exists(temporary):
+                os.unlink(temporary)
 
-    def gravar_json(self, data):
-        with open(DIRETORIO_BOOSTS, "w") as arquivo:
-            json.dump(data, arquivo, indent=4)
+    async def record_message(self, message_id, user_id):
+        async with self.lock:
+            data = self.read("boosts")
+            message_id = str(message_id)
+            if message_id in data["processed_messages"]:
+                return None
+            user_id = str(user_id)
+            data["users"][user_id] = data["users"].get(user_id, 0) + 1
+            data["processed_messages"].append(message_id)
+            self.write("boosts", data)
+            return data["users"][user_id]
 
-    async def limpar_json(self):
-        with open(DIRETORIO_BOOSTS, "w") as arquivo:
-            json.dump({}, arquivo)
+    async def set_count(self, user_id, count):
+        async with self.lock:
+            data = self.read("boosts")
+            data["users"][str(user_id)] = max(0, count)
+            self.write("boosts", data)
+            return data["users"][str(user_id)]
 
-    async def atualizarBoost(self, usuario, boosts):
-        dados = self.ler_json()
-        usuario_id_str = str(usuario.id)
-        dados[usuario_id_str] = {"boosts": boosts}
-        self.gravar_json(dados)
-        return dados[usuario_id_str]
-
-    async def adicionarBoost(self, usuario):
-        usuario_id_str = str(usuario.id)
-        dados = self.ler_json()
-        if usuario_id_str not in dados:
-            dados[usuario_id_str] = {"boosts": 1}
-        else:
-            dados[usuario_id_str]["boosts"] += 1
-        self.gravar_json(dados)
-        return dados[usuario_id_str]["boosts"]
-
-    async def removerBoost(self, usuario):
-        usuario_id_str = str(usuario.id)
-        dados = self.ler_json()
-        if usuario_id_str in dados and dados[usuario_id_str]["boosts"] > 0:
-            dados[usuario_id_str]["boosts"] -= 1
-            self.gravar_json(dados)
-        return dados[usuario_id_str]["boosts"]
-
-    async def obterBoosts(self, usuario):
-        usuario_id_str = str(usuario.id)
-        dados = self.ler_json()
-        return dados.get(usuario_id_str, {"boosts": 0})["boosts"]
+    def count(self, user_id):
+        return self.read("boosts")["users"].get(str(user_id), 0)
 
 
 async def setup(bot):
